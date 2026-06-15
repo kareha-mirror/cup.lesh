@@ -19,7 +19,7 @@ func (sh *Shell) Main() {
 				continue
 			}
 
-			if seq.Rune == termi.RuneEnter {
+			if seq.Rune == termi.RuneEnter || seq.Rune == '\n' {
 				fmt.Print("\r\n")
 
 				if sh.line.String() == "exit" {
