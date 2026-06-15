@@ -4,17 +4,17 @@ import (
 	"tea.kareha.org/cup/termi"
 )
 
-var Prompt = "> "
-
 type Shell struct {
-	alive bool
-	line  termi.RuneBuf
+	alive  bool
+	line   termi.RuneBuf
+	prompt string
 }
 
 func Init(args []string) *Shell {
 	sh := &Shell{
-		alive: true,
-		line:  termi.RuneBuf{},
+		alive:  true,
+		line:   termi.RuneBuf{},
+		prompt: "> ",
 	}
 
 	termi.Raw()
