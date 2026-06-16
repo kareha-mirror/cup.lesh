@@ -20,7 +20,7 @@ func (sh *Shell) Main() {
 				continue
 			}
 
-			if seq.Rune == termi.RuneEnter || seq.Rune == '\n' {
+			if seq.Rune == termi.RuneEnter || seq.Rune == termi.RuneNewline {
 				fmt.Print("\r\n")
 
 				sh.Run()
