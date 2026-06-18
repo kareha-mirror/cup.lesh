@@ -10,17 +10,17 @@ func (sh *Shell) Main() {
 	fmt.Print(sh.prompt)
 
 	for sh.alive {
-		seq := termi.ReadSeq()
-		switch seq.Kind {
-		case termi.SeqRune:
-			if sh.line.Len() < 1 && seq.Rune == '\x04' { // Ctrl-D
+		key := <-termi.Keys()
+		switch key.Kind {
+		case termi.KeyRune:
+			if sh.line.Len() < 1 && key.Rune == '\x04' { // Ctrl-D
 				fmt.Print("\r\n")
 				fmt.Print("quit\r\n")
 				sh.alive = false
 				continue
 			}
 
-			if seq.Rune == termi.RuneEnter || seq.Rune == termi.RuneNewline {
+			if key.Rune == termi.RuneEnter || key.Rune == termi.RuneNewline {
 				fmt.Print("\r\n")
 
 				sh.Run()
@@ -32,8 +32,8 @@ func (sh *Shell) Main() {
 				continue
 			}
 
-			if seq.Rune == termi.RuneBackspace ||
-				seq.Rune == termi.RuneDelete {
+			if key.Rune == termi.RuneBackspace ||
+				key.Rune == termi.RuneDelete {
 				sh.line.RemoveTail()
 				fmt.Print("\r")
 				fmt.Print(sh.line.String())
@@ -41,8 +41,8 @@ func (sh *Shell) Main() {
 				continue
 			}
 
-			sh.line.WriteRune(seq.Rune)
-			fmt.Printf("%c", seq.Rune)
+			sh.line.WriteRune(key.Rune)
+			fmt.Printf("%c", key.Rune)
 		}
 	}
 }

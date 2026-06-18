@@ -50,7 +50,7 @@ func (sh *Shell) Run() {
 	cmd := exec.Command(args[0], args[1:]...)
 	setup(cmd)
 
-	termi.StopInput()
+	termi.StopKey()
 	termi.Cooked()
 	err := cmd.Run()
 	if err != nil {
@@ -60,5 +60,5 @@ func (sh *Shell) Run() {
 	terminate()
 
 	termi.Raw()
-	termi.StartInput()
+	termi.StartKey()
 }

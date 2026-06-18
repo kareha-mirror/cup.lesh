@@ -18,12 +18,12 @@ func Init(args []string) *Shell {
 	}
 
 	termi.Raw()
-	termi.StartInput()
+	termi.StartKey()
 
 	return sh
 }
 
 func (sh *Shell) Finish() {
-	termi.StopInput()
+	termi.StopKey()
 	termi.Cooked()
 }
