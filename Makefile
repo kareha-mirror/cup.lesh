@@ -14,3 +14,8 @@ fmt:
 
 test:
 	go test ./...
+
+tidy:
+	grep -v '^.tea.kareha.org' go.mod > go.mod.clipped
+	mv go.mod.clipped go.mod
+	GOPRIVATE=tea.kareha.org go mod tidy

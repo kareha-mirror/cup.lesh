@@ -13,7 +13,7 @@ func (sh *Shell) Main() {
 		key := <-termi.Keys()
 		switch key.Kind {
 		case termi.KeyRune:
-			if sh.line.Len() < 1 && key.Rune == '\x04' { // Ctrl-D
+			if sh.line.RuneCount() < 1 && key.Rune == '\x04' { // Ctrl-D
 				fmt.Print("\r\n")
 				fmt.Print("quit\r\n")
 				sh.alive = false
@@ -36,6 +36,7 @@ func (sh *Shell) Main() {
 				key.Rune == termi.RuneDelete {
 				sh.line.RemoveTail()
 				fmt.Print("\r")
+				fmt.Print(sh.prompt)
 				fmt.Print(sh.line.String())
 				fmt.Print(termi.ClearTail)
 				continue

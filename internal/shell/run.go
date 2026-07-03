@@ -48,16 +48,21 @@ func (sh *Shell) Run() {
 	}
 
 	cmd := exec.Command(args[0], args[1:]...)
-	setup(cmd)
+	stdio, err := termi.DupStdio()
+	if err != nil {
+		fmt.Printf("%v\r\n", err)
+		return
+	}
+	stdio.AttachTo(cmd)
 
 	termi.StopKey()
 	termi.Cooked()
-	err := cmd.Run()
+
+	err = cmd.Run()
 	if err != nil {
 		fmt.Printf("%v\r\n", err)
 	}
-
-	terminate()
+	stdio.Close()
 
 	termi.Raw()
 	termi.StartKey()
