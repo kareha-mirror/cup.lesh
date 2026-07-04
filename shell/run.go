@@ -9,16 +9,15 @@ import (
 	"tea.kareha.org/cup/termi"
 )
 
-func (sh *Shell) Run() {
-	args := strings.Split(sh.line.String(), " ")
+func Run(sh *Shell, args []string) error {
 	if args[0] == "" {
-		return
+		return fmt.Errorf("No command found")
 	}
 
 	if args[0] == "q" {
 		fmt.Print("quit\r\n")
-		sh.alive = false
-		return
+		sh.Alive = false
+		return nil
 	} else if args[0] == "ev" {
 		if len(args) == 1 {
 			for _, s := range os.Environ() {
@@ -29,29 +28,20 @@ func (sh *Shell) Run() {
 		} else {
 			os.Setenv(args[1], strings.Join(args[2:], " "))
 		}
-		return
+		return nil
 	} else if args[0] == "cd" {
 		if len(args) == 1 {
-			err := os.Chdir(os.Getenv("HOME"))
-			if err != nil {
-				fmt.Printf("%v\r\n", err)
-			}
-			return
+			return os.Chdir(os.Getenv("HOME"))
 		} else {
 			dir := strings.Join(args[1:], " ")
-			err := os.Chdir(dir)
-			if err != nil {
-				fmt.Printf("%v\r\n", err)
-			}
-			return
+			return os.Chdir(dir)
 		}
 	}
 
 	cmd := exec.Command(args[0], args[1:]...)
 	stdio, err := termi.DupStdio()
 	if err != nil {
-		fmt.Printf("%v\r\n", err)
-		return
+		return err
 	}
 	stdio.AttachTo(cmd)
 
@@ -59,11 +49,9 @@ func (sh *Shell) Run() {
 	termi.Cooked()
 
 	err = cmd.Run()
-	if err != nil {
-		fmt.Printf("%v\r\n", err)
-	}
 	stdio.Close()
-
 	termi.Raw()
 	termi.StartKey()
+
+	return err
 }
