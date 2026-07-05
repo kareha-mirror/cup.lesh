@@ -30,7 +30,8 @@ func (sh *Shell) Main() error {
 			if key.Rune == termi.RuneEnter || key.Rune == termi.RuneNewline {
 				fmt.Print("\r\n")
 
-				args := strings.Split(sh.line.String(), " ")
+				line := strings.TrimSpace(sh.line.String())
+				args := strings.Split(line, " ")
 				err := sh.hooks.Run(sh, args)
 				if err != nil {
 					fmt.Printf("%v\r\n", err)
@@ -47,6 +48,61 @@ func (sh *Shell) Main() error {
 				key.Rune == termi.RuneDelete {
 				sh.line.RemoveTail()
 				fmt.Print("\r")
+				fmt.Print(sh.Prompt)
+				fmt.Print(sh.line.String())
+				fmt.Print(termi.ClearTail)
+				continue
+			}
+
+			if key.Rune == 0x09 { // Tab
+				args := strings.Split(sh.line.String(), " ")
+				compList := sh.hooks.CompList(sh, args)
+				if len(compList) < 1 {
+					continue
+				}
+				list := []string{}
+				for _, elem := range compList {
+					if strings.HasPrefix(elem, args[len(args)-1]) {
+						list = append(list, elem)
+					}
+				}
+				if len(list) == 1 {
+					args[len(args)-1] = list[0]
+					args = append(args, "")
+					sh.line.Reset()
+					sh.line.WriteString(strings.Join(args, " "))
+					fmt.Print("\r")
+					fmt.Print(sh.Prompt)
+					fmt.Print(sh.line.String())
+					fmt.Print(termi.ClearTail)
+					continue
+				}
+				i := len(args[len(args)-1])
+			compLoop:
+				for {
+					if len(list[0]) <= i {
+						break
+					}
+					b := list[0][i]
+					for k := 1; k < len(list); k++ {
+						elem := list[k]
+						if len(elem) <= i {
+							break compLoop
+						}
+						if elem[i] != b {
+							break compLoop
+						}
+					}
+					i++
+				}
+				args[len(args)-1] = list[0][:i]
+				sh.line.Reset()
+				sh.line.WriteString(strings.Join(args, " "))
+
+				fmt.Print("\r")
+				fmt.Print(strings.Join(list, "  "))
+				fmt.Print(termi.ClearTail)
+				fmt.Print("\r\n")
 				fmt.Print(sh.Prompt)
 				fmt.Print(sh.line.String())
 				fmt.Print(termi.ClearTail)

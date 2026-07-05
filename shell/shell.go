@@ -35,3 +35,23 @@ func (sh *Shell) Finish() error {
 func OnQuit(sh *Shell) error {
 	return nil
 }
+
+var compList = []string{
+	"q",
+	"ev",
+	"cd",
+}
+
+var dummyFileList = []string{
+	"foobar.txt",
+	"hello1.txt",
+	"hello2.txt",
+	"test.txt",
+}
+
+func CompList(sh *Shell, args []string) []string {
+	if len(args) > 1 {
+		return append([]string(nil), dummyFileList...)
+	}
+	return append([]string(nil), compList...)
+}
