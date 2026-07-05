@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"tea.kareha.org/cup/termi"
+	"tea.kareha.org/cup/termi/stdio"
 )
 
 func Run(sh *Shell, args []string) error {
@@ -39,19 +40,19 @@ func Run(sh *Shell, args []string) error {
 	}
 
 	cmd := exec.Command(args[0], args[1:]...)
-	stdio, err := termi.DupStdio()
+	sio, err := stdio.Dup()
 	if err != nil {
 		return err
 	}
-	stdio.AttachTo(cmd)
+	sio.AttachTo(cmd)
 
-	termi.StopKey()
+	termi.FinishKey()
 	termi.Cooked()
 
 	err = cmd.Run()
-	stdio.Close()
+	sio.Close()
 	termi.Raw()
-	termi.StartKey()
+	termi.InitKey()
 
 	return err
 }
