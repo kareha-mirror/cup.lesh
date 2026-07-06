@@ -64,16 +64,11 @@ func (sh *Shell) Main() error {
 
 			if key.Rune == 0x09 { // Tab
 				args := strings.Split(sh.line.String(), " ")
-				compList := sh.hooks.CompList(sh, args)
-				if len(compList) < 1 {
+				list := sh.hooks.CompList(sh, args)
+				if len(list) < 1 {
 					continue
 				}
-				list := []string{}
-				for _, elem := range compList {
-					if strings.HasPrefix(elem, args[len(args)-1]) {
-						list = append(list, elem)
-					}
-				}
+				list = rutil.FilterByPrefix(list, args[len(args)-1])
 				if len(list) < 1 {
 					continue
 				}
