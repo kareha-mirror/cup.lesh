@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"tea.kareha.org/cup/termi"
+	"tea.kareha.org/cup/termi/rutil"
 )
 
 func (sh *Shell) Main() error {
@@ -31,6 +32,13 @@ func (sh *Shell) Main() error {
 				fmt.Print("\r\n")
 
 				line := strings.TrimSpace(sh.line.String())
+				if line == "" {
+					sh.line.Reset()
+					fmt.Print(sh.Prompt)
+					fmt.Print(sh.line.String())
+					fmt.Print(termi.ClearTail)
+					continue
+				}
 				args := strings.Split(line, " ")
 				err := sh.hooks.Run(sh, args)
 				if err != nil {
@@ -66,6 +74,9 @@ func (sh *Shell) Main() error {
 						list = append(list, elem)
 					}
 				}
+				if len(list) < 1 {
+					continue
+				}
 				if len(list) == 1 {
 					args[len(args)-1] = list[0]
 					args = append(args, "")
@@ -77,25 +88,7 @@ func (sh *Shell) Main() error {
 					fmt.Print(termi.ClearTail)
 					continue
 				}
-				i := len(args[len(args)-1])
-			compLoop:
-				for {
-					if len(list[0]) <= i {
-						break
-					}
-					b := list[0][i]
-					for k := 1; k < len(list); k++ {
-						elem := list[k]
-						if len(elem) <= i {
-							break compLoop
-						}
-						if elem[i] != b {
-							break compLoop
-						}
-					}
-					i++
-				}
-				args[len(args)-1] = list[0][:i]
+				args[len(args)-1] = rutil.CommonPrefix(list)
 				sh.line.Reset()
 				sh.line.WriteString(strings.Join(args, " "))
 
