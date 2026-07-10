@@ -8,6 +8,7 @@ tasks:
   clean:
     cmds:
       - rm -f lesh
+      - rm -f lesh.exe
   test:
     cmds:
       - go test ./...
@@ -23,3 +24,9 @@ tasks:
     cmds:
       - go get tea.kareha.org/cup/termi@latest
       - go mod tidy
+  windows:
+    env:
+      GOOS: windows
+      GOARCH: amd64
+    cmds:
+      - go build -o lesh.exe ./cmd/lesh
