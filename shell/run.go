@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"tea.kareha.org/cup/termi"
-	"tea.kareha.org/cup/termi/stdio"
 )
 
 func Run(sh *Shell, args []string) error {
@@ -40,17 +39,15 @@ func Run(sh *Shell, args []string) error {
 	}
 
 	cmd := exec.Command(args[0], args[1:]...)
-	sio, err := stdio.Dup()
-	if err != nil {
-		return err
-	}
-	sio.AttachTo(cmd)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	termi.FinishKey()
 	termi.Cooked()
 
-	err = cmd.Run()
-	sio.Close()
+	err := cmd.Run()
+
 	termi.Raw()
 	termi.InitKey()
 
