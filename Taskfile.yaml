@@ -1,0 +1,25 @@
+version: "3"
+env:
+  CGO_ENABLED: 0
+tasks:
+  default:
+    cmds:
+      - go build -o lesh ./cmd/lesh
+  clean:
+    cmds:
+      - rm -f lesh
+  test:
+    cmds:
+      - go test ./...
+  run:
+    cmds:
+      - go run ./cmd/lesh
+  fmt:
+    cmds:
+      - go fmt ./...
+  tidy:
+    env:
+      GOPRIVATE: tea.kareha.org
+    cmds:
+      - go get tea.kareha.org/cup/termi@latest
+      - go mod tidy
