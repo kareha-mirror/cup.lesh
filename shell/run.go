@@ -11,7 +11,7 @@ import (
 
 func Run(sh *Shell, args []string) error {
 	if args[0] == "" {
-		return fmt.Errorf("No command found")
+		return fmt.Errorf("command not found")
 	}
 
 	if args[0] == "q" {
