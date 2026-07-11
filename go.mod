@@ -2,7 +2,7 @@ module tea.kareha.org/cup/lesh
 
 go 1.25.0
 
-require tea.kareha.org/cup/termi v0.0.0-20260711132008-efe8fdc0c19a
+require tea.kareha.org/cup/termi v0.0.0-20260711153952-0b191356eb06
 
 require (
 	golang.org/x/sys v0.42.0 // indirect
