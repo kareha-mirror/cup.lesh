@@ -7,8 +7,8 @@ tasks:
       - go build ./cmd/lesh
   clean:
     cmds:
-      - rm -f lesh
-      - rm -f lesh.exe
+      - go run ./cmd/rm lesh
+      - go run ./cmd/rm lesh.exe
   test:
     cmds:
       - go test ./...
